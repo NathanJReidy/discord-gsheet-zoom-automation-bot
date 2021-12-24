@@ -6,7 +6,7 @@ dotenv.config();
 export class DiscordService {
   async getAllDiscordUsernames() {
     const response = await axios.get(
-      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members`,
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
       {
         headers: {
           Content_Type: "application/json",
@@ -14,10 +14,14 @@ export class DiscordService {
         },
       }
     );
-    const allDiscordMembersUsernames = response.data.map(
+
+    const allDiscordUsernames = response.data.map(
       (member) => member.user.username
     );
-    return allDiscordMembersUsernames;
+    console.log(
+      `allDiscordUsernames is ${JSON.stringify(allDiscordUsernames)}`
+    );
+    return allDiscordUsernames;
   }
 
   /**
@@ -33,5 +37,24 @@ export class DiscordService {
     );
 
     return discordUsernamesWithoutBookedCall;
+  }
+
+  async getAllDiscordUserIds() {
+    const response = await axios.get(
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
+      {
+        headers: {
+          Content_Type: "application/json",
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        },
+      }
+    );
+    const allDiscordUserIds = response.data.map((member) => member.user.id);
+    console.log(
+      `allDiscordUserIds in DiscordService are ${JSON.stringify(
+        allDiscordUserIds
+      )}`
+    );
+    return allDiscordUserIds;
   }
 }

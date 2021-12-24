@@ -8,7 +8,11 @@ dotenv.config();
 export class DiscordBotService {
   async startAdminBot() {
     const client = new Client({
-      intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+      intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS,
+      ],
     });
     const id = process.env.TEST_GUILD_ID;
     const prefix = "!";
@@ -25,6 +29,7 @@ export class DiscordBotService {
 
       const discordService = new DiscordService();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
+      const allDiscordUserIds = await discordService.getAllDiscordUserIds();
 
       const googleSheetsService = new GoogleSheetsService();
       const allSpreadSheetDiscordUsernames =
@@ -38,7 +43,7 @@ export class DiscordBotService {
       if (command === "clean") {
         console.log("clean command triggered");
         const timeTaken = Date.now() - message.createdTimestamp;
-        message.reply(`Clean! This message had a latency of ${timeTaken}ms.`);
+        console.log(`This message had a latency of ${timeTaken}ms.`);
         message.reply(
           `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}`
         );
