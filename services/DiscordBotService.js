@@ -31,6 +31,15 @@ export class DiscordBotService {
       const discordBotService = new DiscordBotService();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
       const allDiscordUserIds = await discordService.getAllDiscordUserIds();
+      const allDiscordGuildChannels =
+        await discordService.getAllDiscordGuildChannels();
+
+      // The bot will only work for people in the channelNameWithBotPermission specified below
+      const channelNameWithBotPermission = "general";
+      const channelIdWithBotPermission = allDiscordGuildChannels
+        .filter((channel) => channel.name === channelNameWithBotPermission)
+        .map((channel) => channel.id)
+        .shift();
 
       const googleSheetsService = new GoogleSheetsService();
       const allSpreadSheetDiscordUsernames =
@@ -41,44 +50,35 @@ export class DiscordBotService {
           allDiscordUsernames,
           allSpreadSheetDiscordUsernames
         );
-      // Turn these into switch statements instead of if statements?
-      if (command === "clean") {
-        // const timeTaken = Date.now() - message.createdTimestamp;
-        // console.log(`This message had a latency of ${timeTaken}ms.`);
+
+      if (message.channelId === channelIdWithBotPermission) {
+        switch (command) {
+          case "clean":
+            message.reply(
+              `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}`
+            );
+            break;
+          case "notify":
+            message.reply(
+              `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do you want me to remind them to book (yes/no)?`
+            );
+            discordBotService.messageDiscordUsersWithoutBookedCall(
+              client,
+              allDiscordUsernamesWithoutBookedCall,
+              message
+            );
+            break;
+          case "execute":
+            message.reply(
+              `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do I have permission to publicly execute them (yes/no)?`
+            );
+            break;
+        }
+      } else if (command && message.channelId !== channelIdWithBotPermission) {
         message.reply(
-          `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}`
+          `You do not have permission to use this Bot. Only those in the ${channelNameWithBotPermission} channel can use it.`
         );
       }
-
-      if (command === "notify") {
-        message.reply(
-          `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do you want me to remind them to book (yes/no)?`
-        );
-        discordBotService.messageDiscordUsersWithoutBookedCall(
-          client,
-          allDiscordUsernamesWithoutBookedCall,
-          message
-        );
-        // if yes, send each discord username in the array a message reminding them to book a call or they will be executed within 7 days.
-      }
-
-      if (command === "execute") {
-        message.reply(
-          `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do I have permission to publicly execute them (yes/no)?`
-        );
-      }
-
-      // if channel.id !== #administrative then disable commands and return a
-      // message saying this bot is only available to admins
-      // if channel.id === #administrative then allow all commands
-      //   const guild = client.guilds.cache.find((guild) => guild.id === id);
-      //   if (!guild) {
-      //     throw new Error(`Can't find any guild with the ID "${id}"`);
-      //   }
-      //   const allDiscordMembers = await guild.members.fetch();
-      //   const allDiscordMembersUsernames = allDiscordMembers.map(
-      //     (member) => member.user.username
-      //   );
     });
   }
 
