@@ -18,9 +18,7 @@ export class DiscordService {
     const allDiscordUsernames = response.data.map(
       (member) => member.user.username
     );
-    console.log(
-      `allDiscordUsernames is ${JSON.stringify(allDiscordUsernames)}`
-    );
+
     return allDiscordUsernames;
   }
 
@@ -50,11 +48,38 @@ export class DiscordService {
       }
     );
     const allDiscordUserIds = response.data.map((member) => member.user.id);
-    console.log(
-      `allDiscordUserIds in DiscordService are ${JSON.stringify(
-        allDiscordUserIds
-      )}`
-    );
+    if (!allDiscordUserIds) {
+      throw new Error("There was no result for allDiscordUserIds");
+    }
+
     return allDiscordUserIds;
+  }
+
+  async getAllDiscordUsers() {
+    const response = await axios.get(
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
+      {
+        headers: {
+          Content_Type: "application/json",
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        },
+      }
+    );
+    const allDiscordUsers = response.data.map((member) => member.user);
+    if (!allDiscordUsers) {
+      throw new Error("There was no result for allDiscordUsers");
+    }
+    return allDiscordUsers;
+  }
+
+  async getDiscordIdsFromUsernames(usernames) {
+    const allDiscordUsers = await this.getAllDiscordUsers();
+    const discordUsersFilteredByUsernames = allDiscordUsers.filter((user) =>
+      usernames.includes(user.username)
+    );
+    const discordUserIdsFilteredByUsernames =
+      discordUsersFilteredByUsernames.map((user) => user.id);
+
+    return discordUserIdsFilteredByUsernames;
   }
 }
