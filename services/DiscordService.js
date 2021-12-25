@@ -82,4 +82,22 @@ export class DiscordService {
 
     return discordUserIdsFilteredByUsernames;
   }
+
+  async getAllDiscordGuildChannels() {
+    const response = await axios.get(
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/channels`,
+      {
+        headers: {
+          Content_Type: "application/json",
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        },
+      }
+    );
+
+    const allDiscordGuildChannels = response.data.map(
+      (guildChannel) => guildChannel
+    );
+
+    return allDiscordGuildChannels;
+  }
 }
