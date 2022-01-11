@@ -1,8 +1,7 @@
-import { Client, Intents } from "discord.js";
+import { Client, Intents, Message } from "discord.js";
 import dotenv from "dotenv";
-import axios from "axios";
-import { DiscordService } from "./DiscordService.js";
-import { GoogleSheetsService } from "./GoogleSheetsService.js";
+import { DiscordService } from "./DiscordService";
+import { GoogleSheetsService } from "./GoogleSheetsService";
 dotenv.config();
 
 export class DiscordBotService {
@@ -14,7 +13,7 @@ export class DiscordBotService {
         Intents.FLAGS.GUILD_MEMBERS,
       ],
     });
-    const id = process.env.TEST_GUILD_ID;
+    // const id = process.env.TEST_GUILD_ID;
     const prefix = "!";
 
     client.login(process.env.DISCORD_BOT_TOKEN);
@@ -25,20 +24,20 @@ export class DiscordBotService {
 
       const commandBody = message.content.slice(prefix.length);
       const args = commandBody.split(" ");
-      const command = args.shift().toLowerCase();
+      const command = (args.shift() as string).toLowerCase();
 
       const discordService = new DiscordService();
       const discordBotService = new DiscordBotService();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
-      const allDiscordUserIds = await discordService.getAllDiscordUserIds();
+      // const allDiscordUserIds = await discordService.getAllDiscordUserIds();
       const allDiscordGuildChannels =
         await discordService.getAllDiscordGuildChannels();
 
       // The bot will only work for people in the channelNameWithBotPermission specified below
       const channelNameWithBotPermission = "general";
       const channelIdWithBotPermission = allDiscordGuildChannels
-        .filter((channel) => channel.name === channelNameWithBotPermission)
-        .map((channel) => channel.id)
+        .filter((channel: any) => channel.name === channelNameWithBotPermission)
+        .map((channel: any) => channel.id)
         .shift();
 
       const googleSheetsService = new GoogleSheetsService();
@@ -72,6 +71,7 @@ export class DiscordBotService {
             message.reply(
               `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do I have permission to publicly execute them (yes/no)?`
             );
+            // TODO add functionality for bot to remove users from Discord
             break;
         }
       } else if (command && message.channelId !== channelIdWithBotPermission) {
@@ -82,7 +82,11 @@ export class DiscordBotService {
     });
   }
 
-  async messageDiscordUsersWithoutBookedCall(client, usernames, message) {
+  async messageDiscordUsersWithoutBookedCall(
+    client: Client<boolean>,
+    usernames: string[],
+    message: Message<boolean>
+  ): Promise<Message<boolean> | undefined> {
     const discordService = new DiscordService();
     const allDiscordUserIdsWithoutBookedCall =
       await discordService.getDiscordIdsFromUsernames(usernames);
@@ -96,6 +100,7 @@ export class DiscordBotService {
         await user.send(
           "Reminder: You must book an onboarding call to stay in Theopetra. You have 7 days to book a call or we will publicly execute you ;)"
         );
+        return;
       } catch (error) {
         // message.channel.send(
         //   "User has DMs closed or has no mutual servers with the bot:("
@@ -107,7 +112,10 @@ export class DiscordBotService {
         // To fix this, all I need to do is add a conditional if statement to make sure
         // the username/userId does not equal that of the bot.
         console.log(`error is ${error}`);
+        throw new Error(`error is ${error}`);
       }
     }
+
+    return;
   }
 }

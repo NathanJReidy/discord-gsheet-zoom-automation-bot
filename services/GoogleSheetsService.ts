@@ -1,9 +1,20 @@
 import dotenv from "dotenv";
 import { google } from "googleapis";
-import { GOOGLE_APPLICATION_CREDENTIALS } from "../config/service_account_credentials.js";
+import { GOOGLE_APPLICATION_CREDENTIALS } from "../config/service_account_credentials";
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const sheets = google.sheets("v4");
 dotenv.config();
+
+type spreadsheetInput = {
+  spreadsheetId: string;
+  auth: any;
+};
+
+type spreadsheetValuesInput = {
+  spreadsheetId: string;
+  auth: any;
+  sheetName: string;
+};
 
 export class GoogleSheetsService {
   async getAuthToken() {
@@ -16,7 +27,7 @@ export class GoogleSheetsService {
     return authToken;
   }
 
-  async getSpreadSheet({ spreadsheetId, auth }) {
+  async getSpreadSheet({ spreadsheetId, auth }: spreadsheetInput) {
     const res = await sheets.spreadsheets.get({
       spreadsheetId,
       auth,
@@ -24,7 +35,11 @@ export class GoogleSheetsService {
     return res;
   }
 
-  async getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
+  async getSpreadSheetValues({
+    spreadsheetId,
+    auth,
+    sheetName,
+  }: spreadsheetValuesInput): Promise<any> {
     const res = await sheets.spreadsheets.values.get({
       spreadsheetId,
       auth,
@@ -38,10 +53,10 @@ export class GoogleSheetsService {
    * the Google Sheet, which will be everyone who has
    * booked an onboarding call.
    * */
-  async getAllSpreadSheetDiscordUsernames() {
+  async getAllSpreadSheetDiscordUsernames(): Promise<string> {
     try {
-      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-      const sheetName = process.env.GOOGLE_SHEET_NAME;
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID as string;
+      const sheetName = process.env.GOOGLE_SHEET_NAME as string;
       const auth = await this.getAuthToken();
       const response = await this.getSpreadSheetValues({
         spreadsheetId,
@@ -50,12 +65,14 @@ export class GoogleSheetsService {
       });
       const allSpreadSheetDiscordUsernames = JSON.stringify(
         response.data.values
-          .map((user) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
-          .filter((discordUsername) => discordUsername !== "Discord Username") // exclude "Discord Username" header
+          .map((user: any) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
+          .filter(
+            (discordUsername: any) => discordUsername !== "Discord Username"
+          ) // exclude "Discord Username" header
       );
       return allSpreadSheetDiscordUsernames;
-    } catch (error) {
-      console.log(error.message, error.stack);
+    } catch (error: any) {
+      throw new Error(`${error.message} ${error.stack}`);
     }
   }
 }

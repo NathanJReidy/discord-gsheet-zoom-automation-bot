@@ -1,4 +1,3 @@
-import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import axios from "axios";
 dotenv.config();
@@ -16,7 +15,7 @@ export class DiscordService {
     );
 
     const allDiscordUsernames = response.data.map(
-      (member) => member.user.username
+      (member: any) => member.user.username
     );
 
     return allDiscordUsernames;
@@ -27,11 +26,11 @@ export class DiscordService {
    * but have not booked an onboarding call
    * */
   async findDiscordUsernamesWithoutBookedCall(
-    discordUsernames,
-    gsheetDiscordUsernames
+    discordUsernames: any,
+    gsheetDiscordUsernames: any
   ) {
     const discordUsernamesWithoutBookedCall = discordUsernames.filter(
-      (x) => !gsheetDiscordUsernames.includes(x)
+      (x: any) => !gsheetDiscordUsernames.includes(x)
     );
 
     return discordUsernamesWithoutBookedCall;
@@ -47,7 +46,9 @@ export class DiscordService {
         },
       }
     );
-    const allDiscordUserIds = response.data.map((member) => member.user.id);
+    const allDiscordUserIds = response.data.map(
+      (member: any) => member.user.id
+    );
     if (!allDiscordUserIds) {
       throw new Error("There was no result for allDiscordUserIds");
     }
@@ -65,20 +66,20 @@ export class DiscordService {
         },
       }
     );
-    const allDiscordUsers = response.data.map((member) => member.user);
+    const allDiscordUsers = response.data.map((member: any) => member.user);
     if (!allDiscordUsers) {
       throw new Error("There was no result for allDiscordUsers");
     }
     return allDiscordUsers;
   }
 
-  async getDiscordIdsFromUsernames(usernames) {
+  async getDiscordIdsFromUsernames(usernames: string[]) {
     const allDiscordUsers = await this.getAllDiscordUsers();
-    const discordUsersFilteredByUsernames = allDiscordUsers.filter((user) =>
-      usernames.includes(user.username)
+    const discordUsersFilteredByUsernames = allDiscordUsers.filter(
+      (user: any) => usernames.includes(user.username)
     );
     const discordUserIdsFilteredByUsernames =
-      discordUsersFilteredByUsernames.map((user) => user.id);
+      discordUsersFilteredByUsernames.map((user: any) => user.id);
 
     return discordUserIdsFilteredByUsernames;
   }
@@ -95,7 +96,7 @@ export class DiscordService {
     );
 
     const allDiscordGuildChannels = response.data.map(
-      (guildChannel) => guildChannel
+      (guildChannel: any) => guildChannel
     );
 
     return allDiscordGuildChannels;

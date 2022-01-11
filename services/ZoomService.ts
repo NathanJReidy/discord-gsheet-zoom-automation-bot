@@ -7,7 +7,10 @@ export class ZoomService {
    * booked an onboarding call but who has not attended
    * a Zoom call
    * */
-  async getAllZoomNonAttendees(zoomAttendeesEmails, gsheetEmails) {
+  async getAllZoomNonAttendees(
+    zoomAttendeesEmails: string[],
+    gsheetEmails: string[]
+  ) {
     // if Zoom call scheduled date is in the past (from gsheet column), return allZoomNonAttendees
   }
 
