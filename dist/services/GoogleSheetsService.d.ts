@@ -13,6 +13,7 @@ declare type SpreadsheetValuesInput = {
 export declare class GoogleSheetsService {
     private static instance;
     static get(): Promise<GoogleSheetsService>;
+    private constructor();
     getAuthToken(): Promise<Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient>;
     getSpreadSheet({ spreadsheetId, auth, }: SpreadsheetInput): Promise<GaxiosResponse<sheets_v4.Schema$Spreadsheet>>;
     getSpreadSheetValues({ spreadsheetId, auth, sheetName, }: SpreadsheetValuesInput): Promise<GaxiosResponse<sheets_v4.Schema$ValueRange>>;

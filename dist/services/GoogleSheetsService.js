@@ -11,6 +11,7 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const sheets = googleapis_1.google.sheets("v4");
 dotenv_1.default.config();
 class GoogleSheetsService {
+    constructor() { }
     static async get() {
         if (!GoogleSheetsService.instance) {
             GoogleSheetsService.instance = new GoogleSheetsService();

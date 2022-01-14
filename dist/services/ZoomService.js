@@ -7,6 +7,13 @@ exports.ZoomService = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class ZoomService {
+    constructor() { }
+    static async get() {
+        if (!ZoomService.instance) {
+            ZoomService.instance = new ZoomService();
+        }
+        return ZoomService.instance;
+    }
     /**
      * This returns everyone who has
      * booked an onboarding call but who has not attended

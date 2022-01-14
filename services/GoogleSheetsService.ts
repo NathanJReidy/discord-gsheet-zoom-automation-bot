@@ -43,6 +43,8 @@ export class GoogleSheetsService {
     return GoogleSheetsService.instance;
   }
 
+  private constructor() {}
+
   public async getAuthToken(): Promise<
     Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient
   > {

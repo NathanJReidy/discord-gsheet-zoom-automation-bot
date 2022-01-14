@@ -2,6 +2,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export class ZoomService {
+  private static instance: ZoomService;
+  public static async get(): Promise<ZoomService> {
+    if (!ZoomService.instance) {
+      ZoomService.instance = new ZoomService();
+    }
+    return ZoomService.instance;
+  }
+
+  private constructor() {}
+
   /**
    * This returns everyone who has
    * booked an onboarding call but who has not attended
