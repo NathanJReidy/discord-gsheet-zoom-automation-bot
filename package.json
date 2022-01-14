@@ -6,9 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js",
+    "start": "tsc && node dist/index.js",
+    "build": "tsc",
     "postinstall": "tsc",
-    "deploy": "git add . && git commit -m Heroku && git push heroku main"
+    "deploy": "git push heroku main"
   },
   "author": "",
   "license": "ISC",
