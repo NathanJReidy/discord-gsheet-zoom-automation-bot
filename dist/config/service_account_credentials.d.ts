@@ -2,7 +2,7 @@ export declare const GOOGLE_APPLICATION_CREDENTIALS: {
     type: string | undefined;
     project_id: string | undefined;
     private_key_id: string | undefined;
-    private_key: string | undefined;
+    private_key: any;
     client_email: string | undefined;
     client_id: string | undefined;
     auth_uri: string | undefined;
