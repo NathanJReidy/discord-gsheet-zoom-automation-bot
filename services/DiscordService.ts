@@ -24,9 +24,9 @@ export class DiscordService {
       }
     );
 
-    const allDiscordUsernames = response.data.map(
-      (member: any) => member.user.username
-    );
+    const allDiscordUsernames = response.data
+      .map((member: any) => member.user.username)
+      .filter((username: any) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
 
     return allDiscordUsernames;
   }

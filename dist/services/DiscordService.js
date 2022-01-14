@@ -22,7 +22,9 @@ class DiscordService {
                 Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
             },
         });
-        const allDiscordUsernames = response.data.map((member) => member.user.username);
+        const allDiscordUsernames = response.data
+            .map((member) => member.user.username)
+            .filter((username) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
         return allDiscordUsernames;
     }
     /**
