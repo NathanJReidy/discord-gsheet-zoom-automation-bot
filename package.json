@@ -6,8 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js",
-    "tsc": "tsc & ./node_modules/typescript/bin/tsc",
+    "start": "tsc && node dist/index.js",
+    "tsc": "./node_modules/typescript/bin/tsc",
     "build": "tsc",
     "postinstall": "npm run build"
   },
