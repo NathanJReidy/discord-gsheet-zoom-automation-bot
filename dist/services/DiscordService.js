@@ -8,6 +8,13 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 class DiscordService {
+    constructor() { }
+    static async get() {
+        if (!DiscordService.instance) {
+            DiscordService.instance = new DiscordService();
+        }
+        return DiscordService.instance;
+    }
     async getAllDiscordUsernames() {
         const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`, {
             headers: {

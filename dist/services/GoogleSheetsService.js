@@ -11,6 +11,12 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const sheets = googleapis_1.google.sheets("v4");
 dotenv_1.default.config();
 class GoogleSheetsService {
+    static async get() {
+        if (!GoogleSheetsService.instance) {
+            GoogleSheetsService.instance = new GoogleSheetsService();
+        }
+        return GoogleSheetsService.instance;
+    }
     async getAuthToken() {
         const auth = new googleapis_1.google.auth.GoogleAuth({
             scopes: SCOPES,
@@ -20,7 +26,7 @@ class GoogleSheetsService {
         const authToken = await auth.getClient();
         return authToken;
     }
-    async getSpreadSheet({ spreadsheetId, auth }) {
+    async getSpreadSheet({ spreadsheetId, auth, }) {
         const res = await sheets.spreadsheets.get({
             spreadsheetId,
             auth,
@@ -50,8 +56,11 @@ class GoogleSheetsService {
                 sheetName,
                 auth,
             });
+            if (!response) {
+                throw new Error(`No response for getSpreadSheetValues`);
+            }
             const allSpreadSheetDiscordUsernames = JSON.stringify(response.data.values
-                .map((user) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
+                ?.map((user) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
                 .filter((discordUsername) => discordUsername !== "Discord Username") // exclude "Discord Username" header
             );
             return allSpreadSheetDiscordUsernames;

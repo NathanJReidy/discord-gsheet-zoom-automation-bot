@@ -1,23 +1,51 @@
 import dotenv from "dotenv";
-import { google } from "googleapis";
+import { GaxiosResponse } from "gaxios";
+import {
+  BaseExternalAccountClient,
+  Compute,
+  Impersonated,
+  JWT,
+  UserRefreshClient,
+} from "google-auth-library";
+import { google, sheets_v4 } from "googleapis";
 import { GOOGLE_APPLICATION_CREDENTIALS } from "../config/service_account_credentials";
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 const sheets = google.sheets("v4");
 dotenv.config();
 
-type spreadsheetInput = {
+type SpreadsheetInput = {
   spreadsheetId: string;
-  auth: any;
+  auth:
+    | Compute
+    | JWT
+    | UserRefreshClient
+    | Impersonated
+    | BaseExternalAccountClient;
 };
 
-type spreadsheetValuesInput = {
+type SpreadsheetValuesInput = {
   spreadsheetId: string;
-  auth: any;
+  auth:
+    | Compute
+    | JWT
+    | UserRefreshClient
+    | Impersonated
+    | BaseExternalAccountClient;
   sheetName: string;
 };
 
 export class GoogleSheetsService {
-  async getAuthToken() {
+  private static instance: GoogleSheetsService;
+  public static async get(): Promise<GoogleSheetsService> {
+    if (!GoogleSheetsService.instance) {
+      GoogleSheetsService.instance = new GoogleSheetsService();
+    }
+    return GoogleSheetsService.instance;
+  }
+
+  public async getAuthToken(): Promise<
+    Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient
+  > {
     const auth = new google.auth.GoogleAuth({
       scopes: SCOPES,
       projectId: process.env.GCLOUD_PROJECT,
@@ -27,7 +55,10 @@ export class GoogleSheetsService {
     return authToken;
   }
 
-  async getSpreadSheet({ spreadsheetId, auth }: spreadsheetInput) {
+  public async getSpreadSheet({
+    spreadsheetId,
+    auth,
+  }: SpreadsheetInput): Promise<GaxiosResponse<sheets_v4.Schema$Spreadsheet>> {
     const res = await sheets.spreadsheets.get({
       spreadsheetId,
       auth,
@@ -35,11 +66,13 @@ export class GoogleSheetsService {
     return res;
   }
 
-  async getSpreadSheetValues({
+  public async getSpreadSheetValues({
     spreadsheetId,
     auth,
     sheetName,
-  }: spreadsheetValuesInput): Promise<any> {
+  }: SpreadsheetValuesInput): Promise<
+    GaxiosResponse<sheets_v4.Schema$ValueRange>
+  > {
     const res = await sheets.spreadsheets.values.get({
       spreadsheetId,
       auth,
@@ -53,7 +86,7 @@ export class GoogleSheetsService {
    * the Google Sheet, which will be everyone who has
    * booked an onboarding call.
    * */
-  async getAllSpreadSheetDiscordUsernames(): Promise<string> {
+  public async getAllSpreadSheetDiscordUsernames(): Promise<any> {
     try {
       const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID as string;
       const sheetName = process.env.GOOGLE_SHEET_NAME as string;
@@ -63,12 +96,15 @@ export class GoogleSheetsService {
         sheetName,
         auth,
       });
+
+      if (!response) {
+        throw new Error(`No response for getSpreadSheetValues`);
+      }
+
       const allSpreadSheetDiscordUsernames = JSON.stringify(
         response.data.values
-          .map((user: any) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
-          .filter(
-            (discordUsername: any) => discordUsername !== "Discord Username"
-          ) // exclude "Discord Username" header
+          ?.map((user) => user[2]) // the third column (second index) is the "Discord Username" column in the Google Sheet
+          .filter((discordUsername) => discordUsername !== "Discord Username") // exclude "Discord Username" header
       );
       return allSpreadSheetDiscordUsernames;
     } catch (error: any) {

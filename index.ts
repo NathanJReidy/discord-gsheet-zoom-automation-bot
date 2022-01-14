@@ -1,4 +1,8 @@
 import { DiscordBotService } from "./services/DiscordBotService";
 
-const discordBotService = new DiscordBotService();
-discordBotService.startAdminBot();
+const startBot = async () => {
+  const discordBotService = await DiscordBotService.get();
+  discordBotService.startAdminBot();
+};
+
+startBot();

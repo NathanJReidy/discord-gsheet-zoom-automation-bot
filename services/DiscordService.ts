@@ -3,7 +3,17 @@ import axios from "axios";
 dotenv.config();
 
 export class DiscordService {
-  async getAllDiscordUsernames() {
+  private static instance: DiscordService;
+  public static async get(): Promise<DiscordService> {
+    if (!DiscordService.instance) {
+      DiscordService.instance = new DiscordService();
+    }
+    return DiscordService.instance;
+  }
+
+  private constructor() {}
+
+  public async getAllDiscordUsernames(): Promise<any> {
     const response = await axios.get(
       `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
       {
@@ -25,10 +35,10 @@ export class DiscordService {
    * This returns the people who have accepted a Discord invitation
    * but have not booked an onboarding call
    * */
-  async findDiscordUsernamesWithoutBookedCall(
+  public async findDiscordUsernamesWithoutBookedCall(
     discordUsernames: any,
     gsheetDiscordUsernames: any
-  ) {
+  ): Promise<any> {
     const discordUsernamesWithoutBookedCall = discordUsernames.filter(
       (x: any) => !gsheetDiscordUsernames.includes(x)
     );
@@ -36,7 +46,7 @@ export class DiscordService {
     return discordUsernamesWithoutBookedCall;
   }
 
-  async getAllDiscordUserIds() {
+  public async getAllDiscordUserIds(): Promise<any> {
     const response = await axios.get(
       `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
       {
@@ -56,7 +66,7 @@ export class DiscordService {
     return allDiscordUserIds;
   }
 
-  async getAllDiscordUsers() {
+  public async getAllDiscordUsers(): Promise<any> {
     const response = await axios.get(
       `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
       {
@@ -73,7 +83,7 @@ export class DiscordService {
     return allDiscordUsers;
   }
 
-  async getDiscordIdsFromUsernames(usernames: string[]) {
+  public async getDiscordIdsFromUsernames(usernames: string[]): Promise<any> {
     const allDiscordUsers = await this.getAllDiscordUsers();
     const discordUsersFilteredByUsernames = allDiscordUsers.filter(
       (user: any) => usernames.includes(user.username)
@@ -84,7 +94,7 @@ export class DiscordService {
     return discordUserIdsFilteredByUsernames;
   }
 
-  async getAllDiscordGuildChannels() {
+  public async getAllDiscordGuildChannels(): Promise<any> {
     const response = await axios.get(
       `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/channels`,
       {

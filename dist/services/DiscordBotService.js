@@ -10,6 +10,13 @@ const DiscordService_1 = require("./DiscordService");
 const GoogleSheetsService_1 = require("./GoogleSheetsService");
 dotenv_1.default.config();
 class DiscordBotService {
+    constructor() { }
+    static async get() {
+        if (!DiscordBotService.instance) {
+            DiscordBotService.instance = new DiscordBotService();
+        }
+        return DiscordBotService.instance;
+    }
     async startAdminBot() {
         const client = new discord_js_1.Client({
             intents: [
@@ -29,8 +36,8 @@ class DiscordBotService {
             const commandBody = message.content.slice(prefix.length);
             const args = commandBody.split(" ");
             const command = args.shift().toLowerCase();
-            const discordService = new DiscordService_1.DiscordService();
-            const discordBotService = new DiscordBotService();
+            const discordService = await DiscordService_1.DiscordService.get();
+            const discordBotService = await DiscordBotService.get();
             const allDiscordUsernames = await discordService.getAllDiscordUsernames();
             // const allDiscordUserIds = await discordService.getAllDiscordUserIds();
             const allDiscordGuildChannels = await discordService.getAllDiscordGuildChannels();
@@ -40,21 +47,30 @@ class DiscordBotService {
                 .filter((channel) => channel.name === channelNameWithBotPermission)
                 .map((channel) => channel.id)
                 .shift();
-            const googleSheetsService = new GoogleSheetsService_1.GoogleSheetsService();
+            const googleSheetsService = await GoogleSheetsService_1.GoogleSheetsService.get();
             const allSpreadSheetDiscordUsernames = await googleSheetsService.getAllSpreadSheetDiscordUsernames();
             const allDiscordUsernamesWithoutBookedCall = await discordService.findDiscordUsernamesWithoutBookedCall(allDiscordUsernames, allSpreadSheetDiscordUsernames);
             if (message.channelId === channelIdWithBotPermission) {
                 switch (command) {
-                    case "clean":
+                    case "notbooked":
                         message.reply(`The following Discord users have not booked an onboarding call: ${allDiscordUsernames}`);
                         break;
                     case "notify":
-                        message.reply(`The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do you want me to remind them to book (yes/no)?`);
+                        message.reply(`The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. I have now sent a message to each of them reminding them to book a call.`);
                         discordBotService.messageDiscordUsersWithoutBookedCall(client, allDiscordUsernamesWithoutBookedCall, message);
                         break;
+                    case "help":
+                        message.reply(`You can issue the following commands: 
+
+              !notbooked - this will tell you which Discord users have not booked an onboarding call.
+              !notify - this will send a message to each Discord user without a booked onboarding call, reminding them to book.
+              `);
+                        break;
+                    // TODO: add functionality for bot to remove users from Discord
                     case "execute":
-                        message.reply(`The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do I have permission to publicly execute them (yes/no)?`);
-                        // TODO add functionality for bot to remove users from Discord
+                        // message.reply(
+                        //   `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. Do I have permission to publicly execute them (yes/no)?`
+                        // );
                         break;
                 }
             }
@@ -64,7 +80,7 @@ class DiscordBotService {
         });
     }
     async messageDiscordUsersWithoutBookedCall(client, usernames, message) {
-        const discordService = new DiscordService_1.DiscordService();
+        const discordService = await DiscordService_1.DiscordService.get();
         const allDiscordUserIdsWithoutBookedCall = await discordService.getDiscordIdsFromUsernames(usernames);
         for (const discordUserId of allDiscordUserIdsWithoutBookedCall) {
             const user = await client.users.fetch(discordUserId);
@@ -81,9 +97,8 @@ class DiscordBotService {
                 // This is currently being triggered once because the 'Discord Testing'
                 // bot is included in the array of allDiscordUserIds, and obviously someone
                 // cannot message themself. The bot tries to message itself and throws this error.
-                // To fix this, all I need to do is add a conditional if statement to make sure
+                // TODO: To fix this, all I need to do is add a conditional if statement to make sure
                 // the username/userId does not equal that of the bot.
-                console.log(`error is ${error}`);
                 throw new Error(`error is ${error}`);
             }
         }

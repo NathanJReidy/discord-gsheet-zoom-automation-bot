@@ -1,21 +1,26 @@
-declare type spreadsheetInput = {
+import { GaxiosResponse } from "gaxios";
+import { BaseExternalAccountClient, Compute, Impersonated, JWT, UserRefreshClient } from "google-auth-library";
+import { sheets_v4 } from "googleapis";
+declare type SpreadsheetInput = {
     spreadsheetId: string;
-    auth: any;
+    auth: Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient;
 };
-declare type spreadsheetValuesInput = {
+declare type SpreadsheetValuesInput = {
     spreadsheetId: string;
-    auth: any;
+    auth: Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient;
     sheetName: string;
 };
 export declare class GoogleSheetsService {
-    getAuthToken(): Promise<import("google-auth-library").Compute | import("google-auth-library").JWT | import("google-auth-library").UserRefreshClient | import("google-auth-library").Impersonated | import("google-auth-library").BaseExternalAccountClient>;
-    getSpreadSheet({ spreadsheetId, auth }: spreadsheetInput): Promise<import("gaxios").GaxiosResponse<import("googleapis").sheets_v4.Schema$Spreadsheet>>;
-    getSpreadSheetValues({ spreadsheetId, auth, sheetName, }: spreadsheetValuesInput): Promise<any>;
+    private static instance;
+    static get(): Promise<GoogleSheetsService>;
+    getAuthToken(): Promise<Compute | JWT | UserRefreshClient | Impersonated | BaseExternalAccountClient>;
+    getSpreadSheet({ spreadsheetId, auth, }: SpreadsheetInput): Promise<GaxiosResponse<sheets_v4.Schema$Spreadsheet>>;
+    getSpreadSheetValues({ spreadsheetId, auth, sheetName, }: SpreadsheetValuesInput): Promise<GaxiosResponse<sheets_v4.Schema$ValueRange>>;
     /**
      * This returns all the Discord Usernames from
      * the Google Sheet, which will be everyone who has
      * booked an onboarding call.
      * */
-    getAllSpreadSheetDiscordUsernames(): Promise<string>;
+    getAllSpreadSheetDiscordUsernames(): Promise<any>;
 }
 export {};
