@@ -39,12 +39,14 @@ export class DiscordBotService {
       const discordService = await DiscordService.get();
       const discordBotService = await DiscordBotService.get();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
+      const allDiscordUsernamesLength = allDiscordUsernames.length;
       // const allDiscordUserIds = await discordService.getAllDiscordUserIds();
       const allDiscordGuildChannels =
         await discordService.getAllDiscordGuildChannels();
 
       // The bot will only work for people in the channelNameWithBotPermission specified below
-      const channelNameWithBotPermission = "general";
+      const channelNameWithBotPermission =
+        process.env.CHANNEL_NAME_WITH_BOT_PERMISSION;
       const channelIdWithBotPermission = allDiscordGuildChannels
         .filter((channel: any) => channel.name === channelNameWithBotPermission)
         .map((channel: any) => channel.id)
@@ -64,12 +66,12 @@ export class DiscordBotService {
         switch (command) {
           case "notbooked":
             message.reply(
-              `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}`
+              `${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}`
             );
             break;
           case "notify":
             message.reply(
-              `The following Discord users have not booked an onboarding call: ${allDiscordUsernames}. I have now sent a message to each of them reminding them to book a call.`
+              `${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}. I have now sent a message to each of them reminding them to book a call.`
             );
             discordBotService.messageDiscordUsersWithoutBookedCall(
               client,
