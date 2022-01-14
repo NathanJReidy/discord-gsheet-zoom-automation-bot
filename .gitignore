@@ -1,6 +1,7 @@
 .env
 
 # Google service account credentials 
-service_account_credentials.js
-config/
+# service_account_credentials.js
+# config/
+
 node_modules/
