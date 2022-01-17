@@ -16,7 +16,7 @@ class DiscordService {
         return DiscordService.instance;
     }
     async getAllDiscordUsernames() {
-        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`, {
+        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`, {
             headers: {
                 Content_Type: "application/json",
                 Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
@@ -36,7 +36,7 @@ class DiscordService {
         return discordUsernamesWithoutBookedCall;
     }
     async getAllDiscordUserIds() {
-        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`, {
+        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`, {
             headers: {
                 Content_Type: "application/json",
                 Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
@@ -49,7 +49,7 @@ class DiscordService {
         return allDiscordUserIds;
     }
     async getAllDiscordUsers() {
-        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`, {
+        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`, {
             headers: {
                 Content_Type: "application/json",
                 Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
@@ -68,7 +68,7 @@ class DiscordService {
         return discordUserIdsFilteredByUsernames;
     }
     async getAllDiscordGuildChannels() {
-        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/channels`, {
+        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/channels`, {
             headers: {
                 Content_Type: "application/json",
                 Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,

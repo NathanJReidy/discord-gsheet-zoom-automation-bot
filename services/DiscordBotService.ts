@@ -23,7 +23,7 @@ export class DiscordBotService {
         Intents.FLAGS.GUILD_MEMBERS,
       ],
     });
-    // const id = process.env.TEST_GUILD_ID;
+
     const prefix = "!";
 
     client.login(process.env.DISCORD_BOT_TOKEN);
@@ -40,7 +40,7 @@ export class DiscordBotService {
       const discordBotService = await DiscordBotService.get();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
       const allDiscordUsernamesLength = allDiscordUsernames.length;
-      // const allDiscordUserIds = await discordService.getAllDiscordUserIds();
+
       const allDiscordGuildChannels =
         await discordService.getAllDiscordGuildChannels();
 
@@ -123,16 +123,6 @@ export class DiscordBotService {
         );
         return;
       } catch (error) {
-        // message.channel.send(
-        //   "User has DMs closed or has no mutual servers with the bot:("
-        // );
-
-        // This is currently being triggered once because the 'Discord Testing'
-        // bot is included in the array of allDiscordUserIds, and obviously someone
-        // cannot message themself. The bot tries to message itself and throws this error.
-        // TODO: To fix this, all I need to do is add a conditional if statement to make sure
-        // the username/userId does not equal that of the bot.
-
         throw new Error(`error is ${error}`);
       }
     }

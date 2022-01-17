@@ -15,7 +15,7 @@ export class DiscordService {
 
   public async getAllDiscordUsernames(): Promise<any> {
     const response = await axios.get(
-      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`,
       {
         headers: {
           Content_Type: "application/json",
@@ -48,7 +48,7 @@ export class DiscordService {
 
   public async getAllDiscordUserIds(): Promise<any> {
     const response = await axios.get(
-      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`,
       {
         headers: {
           Content_Type: "application/json",
@@ -68,7 +68,7 @@ export class DiscordService {
 
   public async getAllDiscordUsers(): Promise<any> {
     const response = await axios.get(
-      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/members?query=""&limit=1000`,
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`,
       {
         headers: {
           Content_Type: "application/json",
@@ -96,7 +96,7 @@ export class DiscordService {
 
   public async getAllDiscordGuildChannels(): Promise<any> {
     const response = await axios.get(
-      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.TEST_GUILD_ID}/channels`,
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/channels`,
       {
         headers: {
           Content_Type: "application/json",
