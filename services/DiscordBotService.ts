@@ -24,13 +24,15 @@ export class DiscordBotService {
       ],
     });
 
-    const prefix = "!";
+    const prefixes = ["!", "?", "/"];
 
     client.login(process.env.DISCORD_BOT_TOKEN);
 
     client.on("messageCreate", async function (message) {
       if (message.author.bot) return;
-      if (!message.content.startsWith(prefix)) return;
+
+      const prefix = prefixes.find((p) => message.content.startsWith(p));
+      if (!prefix) return;
 
       const commandBody = message.content.slice(prefix.length);
       const args = commandBody.split(" ");
