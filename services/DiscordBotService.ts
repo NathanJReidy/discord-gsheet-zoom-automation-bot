@@ -24,13 +24,12 @@ export class DiscordBotService {
       ],
     });
 
-    const prefixes = ["!", "?", "/"];
-
     client.login(process.env.DISCORD_BOT_TOKEN);
 
     client.on("messageCreate", async function (message) {
       if (message.author.bot) return;
 
+      const prefixes = ["!", "?", "/"];
       const prefix = prefixes.find((p) => message.content.startsWith(p));
       if (!prefix) return;
 

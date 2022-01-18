@@ -25,12 +25,13 @@ class DiscordBotService {
                 discord_js_1.Intents.FLAGS.GUILD_MEMBERS,
             ],
         });
-        const prefix = "!";
         client.login(process.env.DISCORD_BOT_TOKEN);
         client.on("messageCreate", async function (message) {
             if (message.author.bot)
                 return;
-            if (!message.content.startsWith(prefix))
+            const prefixes = ["!", "?", "/"];
+            const prefix = prefixes.find((p) => message.content.startsWith(p));
+            if (!prefix)
                 return;
             const commandBody = message.content.slice(prefix.length);
             const args = commandBody.split(" ");
