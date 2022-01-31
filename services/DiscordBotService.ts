@@ -40,7 +40,6 @@ export class DiscordBotService {
       const discordService = await DiscordService.get();
       const discordBotService = await DiscordBotService.get();
       const allDiscordUsernames = await discordService.getAllDiscordUsernames();
-      const allDiscordUsernamesLength = allDiscordUsernames.length;
 
       const allDiscordGuildChannels =
         await discordService.getAllDiscordGuildChannels();
@@ -67,12 +66,12 @@ export class DiscordBotService {
         switch (command) {
           case "notbooked":
             message.reply(
-              `${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}`
+              `${allDiscordUsernamesWithoutBookedCall.length} Discord users have not booked an onboarding call: ${allDiscordUsernamesWithoutBookedCall}`
             );
             break;
           case "notify":
             message.reply(
-              `${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}. I have now sent a message to each of them reminding them to book a call.`
+              `${allDiscordUsernamesWithoutBookedCall.length} Discord users have not booked an onboarding call: ${allDiscordUsernamesWithoutBookedCall}. I have now sent a message to each of them reminding them to book a call.`
             );
             discordBotService.messageDiscordUsersWithoutBookedCall(
               client,
@@ -96,11 +95,12 @@ export class DiscordBotService {
             // );
             break;
         }
-      } else if (command && message.channelId !== channelIdWithBotPermission) {
-        message.reply(
-          `You do not have permission to use this Bot. Only those in the ${channelNameWithBotPermission} channel can use it.`
-        );
       }
+      // else if (command && message.channelId !== channelIdWithBotPermission) {
+      //   message.reply(
+      //     `You do not have permission to use this Bot. Only those in the ${channelNameWithBotPermission} channel can use it.`
+      //   );
+      // }
     });
   }
 
@@ -120,7 +120,7 @@ export class DiscordBotService {
 
       try {
         await user.send(
-          "Reminder: You must book an onboarding call to stay in Theopetra. You have 7 days to book a call or we will publicly execute you ;)"
+          "Reminder: You must book an onboarding call within 7 days or you will be kicked from the group."
         );
         return;
       } catch (error) {
