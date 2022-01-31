@@ -16,24 +16,16 @@ class DiscordService {
         return DiscordService.instance;
     }
     async getAllDiscordUsernames() {
-        let allDiscordUsernames = [];
-        let lastUserId = 0;
-        while (true) {
-            const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000&after=${lastUserId}`, {
-                headers: {
-                    Content_Type: "application/json",
-                    Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-                },
-            });
-            if (!response.data || response.data.length === 1) {
-                return allDiscordUsernames;
-            }
-            const allDiscordUsernamesFromResponse = response.data
-                .map((member) => member.user.username)
-                .filter((username) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
-            allDiscordUsernames.push(...allDiscordUsernamesFromResponse);
-            lastUserId = Math.max.apply(null, response.data.map((member) => member.user.id)); // assign the highest user id in the array
-        }
+        const response = await axios_1.default.get(`${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`, {
+            headers: {
+                Content_Type: "application/json",
+                Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+            },
+        });
+        const allDiscordUsernames = response.data
+            .map((member) => member.user.username)
+            .filter((username) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
+        return allDiscordUsernames;
     }
     /**
      * This returns the people who have accepted a Discord invitation
