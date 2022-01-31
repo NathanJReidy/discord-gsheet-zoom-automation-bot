@@ -39,7 +39,6 @@ class DiscordBotService {
             const discordService = await DiscordService_1.DiscordService.get();
             const discordBotService = await DiscordBotService.get();
             const allDiscordUsernames = await discordService.getAllDiscordUsernames();
-            const allDiscordUsernamesLength = allDiscordUsernames.length;
             const allDiscordGuildChannels = await discordService.getAllDiscordGuildChannels();
             // The bot will only work for people in the channelNameWithBotPermission specified below
             const channelNameWithBotPermission = process.env.CHANNEL_NAME_WITH_BOT_PERMISSION;
@@ -53,10 +52,10 @@ class DiscordBotService {
             if (message.channelId === channelIdWithBotPermission) {
                 switch (command) {
                     case "notbooked":
-                        message.reply(`${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}`);
+                        message.reply(`${allDiscordUsernamesWithoutBookedCall.length} Discord users have not booked an onboarding call: ${allDiscordUsernamesWithoutBookedCall}`);
                         break;
                     case "notify":
-                        message.reply(`${allDiscordUsernamesLength} Discord users have not booked an onboarding call: ${allDiscordUsernames}. I have now sent a message to each of them reminding them to book a call.`);
+                        message.reply(`${allDiscordUsernamesWithoutBookedCall.length} Discord users have not booked an onboarding call: ${allDiscordUsernamesWithoutBookedCall}. I have now sent a message to each of them reminding them to book a call.`);
                         discordBotService.messageDiscordUsersWithoutBookedCall(client, allDiscordUsernamesWithoutBookedCall, message);
                         break;
                     case "help":
@@ -74,9 +73,11 @@ class DiscordBotService {
                         break;
                 }
             }
-            else if (command && message.channelId !== channelIdWithBotPermission) {
-                message.reply(`You do not have permission to use this Bot. Only those in the ${channelNameWithBotPermission} channel can use it.`);
-            }
+            // else if (command && message.channelId !== channelIdWithBotPermission) {
+            //   message.reply(
+            //     `You do not have permission to use this Bot. Only those in the ${channelNameWithBotPermission} channel can use it.`
+            //   );
+            // }
         });
     }
     async messageDiscordUsersWithoutBookedCall(client, usernames, message) {
@@ -87,7 +88,7 @@ class DiscordBotService {
             if (!user)
                 return message.channel.send(`User with id ${discordUserId} not found`);
             try {
-                await user.send("Reminder: You must book an onboarding call to stay in Theopetra. You have 7 days to book a call or we will publicly execute you ;)");
+                await user.send("Reminder: You must book an onboarding call within 7 days or you will be kicked from the group.");
                 return;
             }
             catch (error) {

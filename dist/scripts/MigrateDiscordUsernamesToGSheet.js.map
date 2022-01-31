@@ -1,0 +1,1 @@
+{"version":3,"file":"MigrateDiscordUsernamesToGSheet.js","sourceRoot":"","sources":["../../scripts/MigrateDiscordUsernamesToGSheet.ts"],"names":[],"mappings":";;;AAAA,yEAAsE;AAE/D,MAAM,+BAA+B,GAAG,KAAK,IAAI,EAAE;IACxD,MAAM,mBAAmB,GAAG,MAAM,yCAAmB,CAAC,GAAG,EAAE,CAAC;IAC5D,mBAAmB,CAAC,oCAAoC,EAAE,CAAC;AAC7D,CAAC,CAAC;AAHW,QAAA,+BAA+B,mCAG1C;AAEF,IAAA,uCAA+B,GAAE,CAAC"}

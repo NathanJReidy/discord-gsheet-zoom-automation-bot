@@ -23,5 +23,6 @@ export declare class GoogleSheetsService {
      * booked an onboarding call.
      * */
     getAllSpreadSheetDiscordUsernames(): Promise<any>;
+    postAllDiscordUsernamesToSpreadSheet(): Promise<any>;
 }
 export {};
