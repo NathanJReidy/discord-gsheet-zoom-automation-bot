@@ -12,4 +12,10 @@ export declare class DiscordService {
     getAllDiscordUsers(): Promise<any>;
     getDiscordIdsFromUsernames(usernames: string[]): Promise<any>;
     getAllDiscordGuildChannels(): Promise<any>;
+    /**
+     * This returns all Discord Usernames in the server.
+     * Use this method instead of getAllDiscordUsernames
+     * if your server has more than 100 members
+     * */
+    getAllDiscordUsernamesWithoutMaxLimit(): Promise<any>;
 }

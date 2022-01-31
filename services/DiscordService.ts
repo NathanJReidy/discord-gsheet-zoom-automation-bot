@@ -37,16 +37,17 @@ export class DiscordService {
     discordUsernames: any,
     gsheetDiscordUsernames: any
   ): Promise<any> {
-    const formattedDiscordUsernames = discordUsernames.map((i: any) =>
-      i.split(" ").join("").toLowerCase()
-    ); // remove spaces and make lowercase
-
     const formattedGsheetDiscordUsernames = gsheetDiscordUsernames.map(
       (i: any) => i.split(" ").join("").toLowerCase()
     ); // remove spaces and make lowercase
 
-    const discordUsernamesWithoutBookedCall = formattedDiscordUsernames.filter(
-      (x: any) => !formattedGsheetDiscordUsernames.includes(x)
+    const discordUsernamesWithoutBookedCall = discordUsernames.filter(
+      (x: any) => {
+        const formattedDiscordUsername = x.split(" ").join("").toLowerCase(); // remove spaces and make lowercase
+        return !formattedGsheetDiscordUsernames.includes(
+          formattedDiscordUsername
+        );
+      }
     );
 
     return discordUsernamesWithoutBookedCall;
