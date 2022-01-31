@@ -14,34 +14,19 @@ export class DiscordService {
   private constructor() {}
 
   public async getAllDiscordUsernames(): Promise<any> {
-    let allDiscordUsernames: any[] = [];
-    let lastUserId = 0;
-    while (true) {
-      const response = await axios.get(
-        `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000&after=${lastUserId}`,
-        {
-          headers: {
-            Content_Type: "application/json",
-            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          },
-        }
-      );
-
-      if (!response.data || response.data.length === 1) {
-        return allDiscordUsernames;
+    const response = await axios.get(
+      `${process.env.DISCORD_BASE_URL}/guilds/${process.env.GUILD_ID}/members?query=""&limit=1000`,
+      {
+        headers: {
+          Content_Type: "application/json",
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        },
       }
-
-      const allDiscordUsernamesFromResponse = response.data
-        .map((member: any) => member.user.username)
-        .filter((username: any) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
-
-      allDiscordUsernames.push(...allDiscordUsernamesFromResponse);
-
-      lastUserId = Math.max.apply(
-        null,
-        response.data.map((member: any) => member.user.id)
-      ); // assign the highest user id in the array
-    }
+    );
+    const allDiscordUsernames = response.data
+      .map((member: any) => member.user.username)
+      .filter((username: any) => username != process.env.DISCORD_BOT_NAME); // exclude the Discord Bot from the returned allDiscordUsernames
+    return allDiscordUsernames;
   }
 
   /**
